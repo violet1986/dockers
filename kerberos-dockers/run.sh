@@ -22,7 +22,7 @@ EOF
 while getopts "rs" opt; do
     case $opt in
     r) REBUILD_DOCKER_IMAGES="true";;
-    c) CLOSE_SERVICES="true";;
+    s) CLOSE_SERVICES="true";;
     h) usage;;
     esac
 done
@@ -36,6 +36,7 @@ cp -R "$BASE_DIR" "$TEST_DIR"
 echo "WARNING: This script will start gpdb docker on your 5432 port, please make sure your local gpdb is stopped or not running on 5432."
 DOCKER_DIR="$TEST_DIR/dockers"
 echo "Temp dir is $TEST_DIR"
+cp -R "$DOCKER_DIR/ldap/certs" "$DOCKER_DIR/gpdb/"
 if [[ "$OSTYPE" == "darwin"* ]]; then
         DOCKER=docker
 else
@@ -171,12 +172,6 @@ cat "$DOCKER_DIR/kdc/krb5.conf.template" \
 cat "$DOCKER_DIR/ldap/ldif/user.ldif.template" \
                 | sed -e "s/LDAP_USER_NAME/${LDAP_USER_NAME}/g" \
                 > "$DOCKER_DIR/ldap/ldif/user.ldif"
-
-cat "$DOCKER_DIR/ldap/ldapentrypoint.sh.template" \
-                | sed -e "s/LDAP_USER_NAME/${LDAP_USER_NAME}/g" \
-                | sed -e "s/USER_PASSWORD/${USER_PASSWORD}/g" \
-                > "$DOCKER_DIR/ldap/ldapentrypoint.sh"
-
 
 build_image "$DOCKER_DIR/kdc" "kdc-${env_suffix}" "" 
 run_image "kdc" "kdc-${env_suffix}" "-dit -p 88:88"

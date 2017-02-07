@@ -4,6 +4,7 @@ RUN mkdir -p /go/src/gpcc
 RUN apt-get update && apt-get install -y \
     sudo \
     vim \
+    screen \
     postgresql \
     libkrb5-dev
 
@@ -18,8 +19,8 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
     build-essential
 RUN npm install --global gulp@3.9.0
 USER gpadmin
-VOLUME /go/src/gpcc
-WORKDIR /go/src/gpcc
+VOLUME /go/src
+WORKDIR /go/src
 RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && ~/.bash_it/install.sh >/dev/null \
     && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
